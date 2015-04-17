@@ -75,10 +75,16 @@ app.post('/signup', function(req, res) {
     
     // Get a Postgres client from the connection pool
     pg.connect(connString, function(err, client, done) {
-
-        // SQL Query > Insert Data
-        client.query("INSERT INTO users(username, password) values($1, $2)", [newuser, newpass]);
-
+	var people = client.query("SELECT username FROM users");
+	people.on('row',function(row) {
+		if(row == req.body.newuser){
+			console.log("It exists!");
+		}
+		else{
+        		// SQL Query > Insert Data
+        		client.query("INSERT INTO users(username, password) values($1, $2)", [newuser, newpass]);
+		}
+	});
         // SQL Query > Select Data
         var query = client.query("SELECT * FROM users");
 
@@ -103,7 +109,7 @@ app.post('/signup', function(req, res) {
 
 
 
-var port = process.env.PORT || 5000;
+var port = process.env.port || 5000;
 app.listen(port, function() {
         console.log("Listening on " + port);
 });
