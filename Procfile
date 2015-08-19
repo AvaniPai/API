@@ -1,2 +1,4 @@
-web: node web.js
+
+web: gunicorn app:app --log-file=-
+
 
